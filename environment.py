@@ -26,7 +26,7 @@ class GridWorld:
     STEP_REWARD = -0.1
     GOAL_REWARD = 1.0
     OBSTACLE_PENALTY = -1.0
-    RENALTY_REWARD = -0.5
+    PENALTY_REWARD = -0.5
 
     def __init__(self, width=10, height=10, obstacle_density=0.2, penalty_density=0.1, max_steps=100):
         """ Initialize the grid world environment """
@@ -57,4 +57,75 @@ class GridWorld:
 
 
     def reset(self):
+        """Reset the environment for a new episode."""
+        self.agent_pos = self.start_pos
+        self.done = False
+        self.step_count = 0
+        return self.__getstate__()
+
+    def _get_state(self):
+        """Convert agent position to state representation."""
+        return self.agent_pos[0] * self.width + self.agent_pos[1]
+
+    def step(self, action):
+        """
+        Take a step in the environment.
+
+        Args:
+            action (int): 0: up, 1: right, 2: down, 3: left
+
+        Returns:
+            tuple: (next_state, reward, done, info)
+        """
+
+        # Increase step count
+        self.step_count += 1
+
+        # Get current position
+        row, col = self.agent_pos
+
+        # Determine next position based on action
+        if action == 0: # Up
+            next_row, next_col = max(0, row - 1), col
+        elif action == 1: # Right
+            next_row, next_col = row, min(self.width - 1, col + 1)
+        elif action == 2: # Down
+            next_row, next_col = min(self.height - 1, row + 1), col
+        elif action == 3: # Left
+            next_row, next_col = row, max(0, col - 1)
+        else:
+            raise ValueError(f"Invalid action: {action}")
+
+        # Check if hitting an obstacle
+        if self.grid[next_row, next_col] == self.OBSTACLE:
+            reward = self.OBSTACLE_PENALTY
+            next_row, next_col = row, col # Stay in place
+        # Check if reaching the goal
+        elif self.grid[next_row, next_col] == self.GOAL:
+            reward = self.GOAL_REWARD
+            self.done = True
+        # Check if stepping on a penalty
+        elif self.grid[next_row, next_col] == self.PENALTY:
+            reward = self.PENALTY_REWARD
+        # Empty cell
+        else:
+            reward = self.STEP_REWARD
+
+        # Update agent position
+        self.agen_pos = (next_row, next_col)
+
+        # Check if maximum steps reached
+        if self.step_count >= self.max_steps:
+            self.done = True
+
+        # Return next state, reward, done, and info
+        return self._get_state(), reward, self.done, {}
+
+    def get_num_states(self):
+        """Get the total number of states in the environment."""
+        return self.width * self.height
+
+    def get_num_actions(self):
+        """Get the total number of actions in the environment."""
+        return 4 # Up, Right, Down, Left
 
