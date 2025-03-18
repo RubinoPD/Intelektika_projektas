@@ -1,6 +1,6 @@
 import numpy as np
 
-class QLearnAgent:
+class QLearningAgent:
     """
     Q-learning agent that learns to navigate the grid world.
 
