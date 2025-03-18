@@ -100,3 +100,54 @@ class GridWorldVisualizer:
         # Draw learning curve if enough episodes
         if len(self.agent.rewards_per_episode) > 1:
             self.draw_learning_curve()
+
+    def draw_learning_curve(self):
+        """
+        Draw the learning curve using matplotlib
+        """
+
+        # Create figure and plot
+        fig, ax = plt.subplots(figsize=(4, 2), dpi=80)
+        ax.plot(self.agent.rewards_per_episode[-100:])
+        ax.set_title('Rewards (Last 100 episodes)')
+        ax.set_xlabel('Episode')
+        ax.set_ylabel('Total Reward')
+
+        # Convert plot to pygame surface
+        canvas = FigureCanvasAgg(fig)
+        canvas.draw()
+        renderer = canvas.get_renderer()
+        raw_data = renderer.tostring_rgb()
+        size = canvas.get_width_height()
+
+        # Create pygame surface from raw data
+        surf = pygame.image.fromstring(raw_data, size, "RGB")
+        self.screen.blit(surf, (self.width // 2, self.env.height * self.cell_size + 10))
+
+        # Close figure to prevent memory leak
+        plt.close(fig)
+
+    def update(self, episode, total_reward):
+        """
+        Update the visualization
+        """
+        self.draw_grid()
+        self.draw_stats(episode, total_reward, self.agent.exploration_rate)
+        pygame.display.flip()
+        self.clock.tick(10) # Frame rate
+
+    def check_events(self):
+        """
+        Check for Pygame events
+        """
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return False
+        return True
+
+    def close(self):
+        """
+        Close the visualizer
+        """
+        pygame.quit()
+
