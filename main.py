@@ -1,5 +1,7 @@
 import time
 import numpy as np
+import pygame.time
+
 from environment import GridWorld
 from agent import QLearningAgent
 from visualization import GridWorldVisualizer
@@ -22,14 +24,19 @@ def train(env, agent, visualizer=None, num_episodes=1000, render=True, render_fr
         state = env.reset()
         done = False
         total_reward = 0
+        step_count = 0
+
+        print(f"Epizodas {episode}: Pradžios būsena: {state}")
 
         # Run episode
         while not done:
             # Choose action
             action = agent.choose_action(state)
+            print(f"  Žingsnis {step_count}: Būsena {state}, Veiksmas {action}")
 
             # Take action
             next_state, reward, done, _ = env.step(action)
+            print(f"  Rezultatas: Nauja būsena {next_state}, Atlygis {reward}, Baigta {done}")
 
             # Learn from experience
             agent.learn(state, action, reward, next_state, done)
@@ -37,10 +44,12 @@ def train(env, agent, visualizer=None, num_episodes=1000, render=True, render_fr
             # Update state and total reward
             state = next_state
             total_reward += reward
+            step_count =+ 1
 
             # Render if needed
             if render and visualizer and episode % render_freq == 0:
                 visualizer.update(episode, total_reward)
+                pygame.time.delay(200) # 200ms pauze
                 if not visualizer.check_events():
                     return # Exit if window closed
 

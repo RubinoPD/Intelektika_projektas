@@ -46,12 +46,25 @@ class QLearningAgent:
         Returns:
             int: Chosen action
         """
-        # Exploration: choose a random action
-        if np.random.random() < self.exploration_rate:
-            return np.random.randint(0, self.num_actions)
-        # Exploitation: choose the best action
-        else:
-            return np.argmax(self.q_table[state])
+
+        try:
+            if isinstance(state, dict) and 'agent_pos' in state:
+                row, col = state['agent_pos']
+                width = state['width']
+                state_idx = int(row * width + col)
+            else:
+                state_idx = int(state)
+
+            # Exploration: choose a random action
+            if np.random.random() < self.exploration_rate:
+                return np.random.randint(0, self.num_actions)
+            # Exploitation: choose the best action
+            else:
+                return np.argmax(self.q_table[state_idx])
+        except Exception as e:
+            print(f"Klaida pasirenkant veiksma: {e}")
+            return np.random.randint(0, self.num_actions )
+
 
     def learn(self, state, action, reward, next_state, done):
         """
@@ -78,12 +91,12 @@ class QLearningAgent:
             else:
                 state_idx = int(state)
 
-            if isinstance(state, dict) and 'agent_pos' in next_state:
-                row, col = state['agent_pos']
-                width = state['width']
-                state_idx = int(row * width + col)
+            if isinstance(next_state, dict) and 'agent_pos' in next_state:
+                next_row, next_col = next_state['agent_pos']
+                next_width = next_state['width']
+                next_state_idx = int(next_row * next_width + next_col)
             else:
-                state_idx=int(next_state)
+                next_state_idx=int(next_state)
 
             action = int(action)
 
@@ -94,7 +107,7 @@ class QLearningAgent:
             if done:
                 max_next_q = 0
             else:
-                max_next_q = np.max(self.q_table[next_state])
+                max_next_q = np.max(self.q_table[next_state_idx])
 
             # Calculate new Q-value using the Q-learning formula
             new_q = current_q + self.learning_rate * (reward + self.discount_factor * max_next_q - current_q)
@@ -103,7 +116,9 @@ class QLearningAgent:
             self.q_table[state_idx, action] = new_q
         except Exception as e:
             print(f"Klaida atnaujinant Q-lentelę: {e}")
-            print(f"state_idx: {state_idx if 'state_idx' in locals() else 'Nenustatyta'}, action: {action}")
+            print(f"State: {state}")
+            print(f"Next state: {next_state}")
+            print(f"Action: {action}")
 
     def decay_exploration(self):
         """Decay the exploration rate."""
