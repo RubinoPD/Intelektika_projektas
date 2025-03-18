@@ -46,8 +46,8 @@ class QLearningAgent:
         Returns:
             int: Chosen action
         """
-
         try:
+            # Konvertuojame state į tinkamą formatą
             if isinstance(state, dict) and 'agent_pos' in state:
                 row, col = state['agent_pos']
                 width = state['width']
@@ -62,9 +62,9 @@ class QLearningAgent:
             else:
                 return np.argmax(self.q_table[state_idx])
         except Exception as e:
-            print(f"Klaida pasirenkant veiksma: {e}")
-            return np.random.randint(0, self.num_actions )
-
+            print(f"Klaida pasirenkant veiksmą: {e}")
+            # Saugumo sumetimais grąžiname atsitiktinį veiksmą
+            return np.random.randint(0, self.num_actions)
 
     def learn(self, state, action, reward, next_state, done):
         """
@@ -77,13 +77,8 @@ class QLearningAgent:
             next_state (int): Next state
             done (bool): Whether episode is finished
         """
-
-        # state = int(state)
-        # action = int(action)
-        # next_state = int(next_state)
-
         try:
-
+            # Apdorojame state
             if isinstance(state, dict) and 'agent_pos' in state:
                 row, col = state['agent_pos']
                 width = state['width']
@@ -91,12 +86,13 @@ class QLearningAgent:
             else:
                 state_idx = int(state)
 
+            # Apdorojame next_state - PATAISYTA DALIS
             if isinstance(next_state, dict) and 'agent_pos' in next_state:
                 next_row, next_col = next_state['agent_pos']
                 next_width = next_state['width']
                 next_state_idx = int(next_row * next_width + next_col)
             else:
-                next_state_idx=int(next_state)
+                next_state_idx = int(next_state)
 
             action = int(action)
 
@@ -114,6 +110,7 @@ class QLearningAgent:
 
             # Update Q-table
             self.q_table[state_idx, action] = new_q
+
         except Exception as e:
             print(f"Klaida atnaujinant Q-lentelę: {e}")
             print(f"State: {state}")
