@@ -35,3 +35,48 @@ class QLearnAgent:
         # Training statistics
         self.rewards_per_episode = []
         self.steps_per_episode = []
+
+    def choose_action(self, state):
+        """
+        Choose an action using epsilon-greedy policy.
+
+        Args:
+            state (int): Current state
+
+        Returns:
+            int: Chosen action
+        """
+
+        # Exploration: choose a random action
+        if np.random.random() < self.exploration_rate:
+            return np.random.randint(0, self.num_actions)
+        # Exploration: choose the best action
+        else:
+            return np.argmax(self.q_table[state])
+
+    def learn(self, state, action, reward, next_state, done):
+        """
+        Update Q-value for the given state-action pair.
+
+        Args:
+            state (int): Current state
+            action (int): Action taken
+            reward (float): Reward received
+            next_state (int): Next state
+            done (bool): Whether episode is finished
+        """
+
+        # Get current Q-value
+        current_q = self.q_table[state, action]
+
+        # Get max Q-value for next state
+        if done:
+            max_next_q = 0
+        else:
+            max_next_q = np.max(self.q_table[next_state])
+
+        # Calculate new Q-value using the Q-learning formula
+        new_q = current_q + self.learning_rate * (reward + self.discount_factor * max_next_q - current_q)
+
+        # Update Q-table
+        self.q_table[state, action] = new_q
