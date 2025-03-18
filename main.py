@@ -60,9 +60,24 @@ def train(env, agent, visualizer=None, num_episodes=1000, render=True, render_fr
     agent.save_q_table()
 
 
+def main():
+    """
+    Main function
+    """
+    # Create environment and agent
+    env = GridWorld(width=10, height=10, obstacle_density=0.2, penalty_density=0.1, max_steps=100)
+    agent = QLearningAgent(num_states=env.get_num_states(), num_actions=env.get_num_actions(), learning_rate=0.1, discount_factor=0.9, exploration_rate=1.0, min_exploration_rate=0.01, exploration_decay=0.995)
 
+    # Create visualizer
+    visualizer = GridWorldVisualizer(env, agent, cell_size=50)
+
+    # Train agent
+    train(env, agent, visualizer, num_episodes=500, render=True, render_freq=1)
+
+    # Close visualizer
+    visualizer.close()
 
 if __name__ == '__main__':
-    print_hi('PyCharm')
+    main()
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
