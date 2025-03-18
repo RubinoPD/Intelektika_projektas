@@ -53,7 +53,8 @@ def train(env, agent, visualizer=None, num_episodes=1000, render=True, render_fr
 
         # Print episode info
         if episode % 10 == 0:
-            avg_reward = np.mean(agent.rewards_per_episode[-10])
+            recent_rewards = agent.rewards_per_episode[-min(10, len(agent.rewards_per_episode)):]
+            avg_reward = np.mean(recent_rewards) if recent_rewards else 0
             print(f"Episode: {episode}, Average Reward (Last 10): {avg_reward:.2f}, Exploration Rate: {agent.exploration_rate:.4f}")
 
     # Save Q-table after training
@@ -69,7 +70,7 @@ def main():
     agent = QLearningAgent(num_states=env.get_num_states(), num_actions=env.get_num_actions(), learning_rate=0.1, discount_factor=0.9, exploration_rate=1.0, min_exploration_rate=0.01, exploration_decay=0.995)
 
     # Create visualizer
-    visualizer = GridWorldVisualizer(env, agent, cell_size=50)
+    visualizer = GridWorldVisualizer(env, agent, cell_size=100)
 
     # Train agent
     train(env, agent, visualizer, num_episodes=500, render=True, render_freq=1)

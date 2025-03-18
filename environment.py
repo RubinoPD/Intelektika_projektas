@@ -61,11 +61,11 @@ class GridWorld:
         self.agent_pos = self.start_pos
         self.done = False
         self.step_count = 0
-        return self.__getstate__()
+        return self._get_state()
 
     def _get_state(self):
         """Convert agent position to state representation."""
-        return self.agent_pos[0] * self.width + self.agent_pos[1]
+        return int(self.agent_pos[0] * self.width + self.agent_pos[1])
 
     def step(self, action):
         """

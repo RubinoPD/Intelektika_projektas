@@ -75,7 +75,7 @@ class GridWorldVisualizer:
                     pygame.draw.rect(self.screen, self.colors['lightblue'], rect)
 
                 # Draw cell border
-                pygame.draw.rect(self.screen, self.colors['gray'], rect)
+                pygame.draw.rect(self.screen, self.colors['gray'], rect, 1)
 
     def draw_stats(self, episode, total_reward, exploration_rate):
         """
@@ -117,11 +117,11 @@ class GridWorldVisualizer:
         canvas = FigureCanvasAgg(fig)
         canvas.draw()
         renderer = canvas.get_renderer()
-        raw_data = renderer.tostring_rgb()
+        raw_data = renderer.tostring_argb()
         size = canvas.get_width_height()
 
         # Create pygame surface from raw data
-        surf = pygame.image.fromstring(raw_data, size, "RGB")
+        surf = pygame.image.fromstring(raw_data, size, "ARGB")
         self.screen.blit(surf, (self.width // 2, self.env.height * self.cell_size + 10))
 
         # Close figure to prevent memory leak
