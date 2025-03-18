@@ -80,3 +80,32 @@ class QLearnAgent:
 
         # Update Q-table
         self.q_table[state, action] = new_q
+
+    def decay_exploration(self):
+        """
+        Decay the exploration rate
+        """
+
+        self.exploration_rate = max(self.min_exploration_rate, self.exploration_rate * self.exploration_decay)
+
+    def save_episode_result(self, episode_reward, episode_steps):
+        """
+        Save the results of an episode
+        """
+
+        self.rewards_per_episode.append(episode_reward)
+        self.steps_per_episode.append(episode_steps)
+
+    def save_q_table(self, filename="q_table.npy"):
+        """
+        Save the Q-table to a file
+        """
+
+        np.save(filename, self.q_table)
+
+    def load_q_table(self, filename="q_table.npy"):
+        """
+        Load the Q-table to a file
+        """
+
+        self.q_table = np.load(filename)
