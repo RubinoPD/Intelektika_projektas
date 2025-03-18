@@ -1,3 +1,4 @@
+import matplotlib
 import pygame
 import numpy as np
 import matplotlib.pyplot as plt
@@ -106,6 +107,7 @@ class GridWorldVisualizer:
     def draw_learning_curve(self):
         """Draw the learning curve using matplotlib."""
         try:
+            matplotlib.use('Agg')
             # Create figure and plot
             fig, ax = plt.subplots(figsize=(4, 2), dpi=80)
 
@@ -120,11 +122,11 @@ class GridWorldVisualizer:
             canvas = FigureCanvasAgg(fig)
             canvas.draw()
             renderer = canvas.get_renderer()
-            raw_data = renderer.tostring_rgb()
+            raw_data = renderer.tostring_argb()
             size = canvas.get_width_height()
 
             # Create pygame surface from raw data
-            surf = pygame.image.fromstring(raw_data, size, "RGB")
+            surf = pygame.image.fromstring(raw_data, size, "ARGB")
             self.screen.blit(surf, (self.width // 2, self.env.height * self.cell_size + 10))
 
             # Close figure to prevent memory leak
