@@ -24,8 +24,8 @@ class GridWorld:
     PENALTY = 3
 
     # Rewards
-    STEP_REWARD = -0.1
-    GOAL_REWARD = 1.0
+    STEP_REWARD = -0.1 # pakeisti is -0.1 i -0.01 greitesniam
+    GOAL_REWARD = 10.0 # padidinti atlygi is 1.0 iki 10.0 jei norisi greitesnio mokymosi
     OBSTACLE_PENALTY = -1.0
     PENALTY_REWARD = -0.5
 

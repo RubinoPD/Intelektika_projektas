@@ -47,7 +47,7 @@ def train(env, agent, visualizer=None, num_episodes=1000, render=True, render_fr
             # Render if needed
             if render and visualizer and episode % render_freq == 0:
                 visualizer.update(episode, total_reward)
-                pygame.time.delay(200)  # Pridedame pauzę, kad geriau matytųsi judėjimas
+                pygame.time.delay(50)  # Pridedame pauzę, kad geriau matytųsi judėjimas
                 if not visualizer.check_events():
                     return  # Exit if window closed
 
@@ -78,18 +78,18 @@ def main():
     agent = QLearningAgent(
         num_states=env.get_num_states(),
         num_actions=env.get_num_actions(),
-        learning_rate=0.1,
+        learning_rate=0.3, # Padidinti is 0.1 iki 0.3 ir atvirksciai jei noriu greitesnio ar letesnio mokymosi
         discount_factor=0.9,
         exploration_rate=1.0,  # SVARBU: pradeti su 1.0, kad agentas tyrinėtų
         min_exploration_rate=0.01,
-        exploration_decay=0.995
+        exploration_decay=0.98 # Pamazinti decay jei norisi greiciau
     )
 
     # Create visualizer
     visualizer = GridWorldVisualizer(env, agent, cell_size=80)
 
     # Train agent
-    train(env, agent, visualizer, num_episodes=500, render=True, render_freq=1)
+    train(env, agent, visualizer, num_episodes=500, render=True, render_freq=10)
 
     # Close visualizer
     visualizer.close()
